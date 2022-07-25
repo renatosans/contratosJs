@@ -18,11 +18,7 @@ app.listen(port, () => console.log('Express escutando chamadas na porta ' + port
 /*
 // altera a senha
 app.post('/changePassword', (req, res) => {
-    const username = req.body.username;
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    const confirmation = req.body.confirmation;
-
+    const { username, oldPassword, newPassword, confirmation } = req.body;
 
     const query = "SELECT * FROM login WHERE usuario='" + username + "' AND senha='" + oldPassword + "'";
     mysqlConnection.query(query, (err, rows, fields) => {

@@ -10,11 +10,20 @@ function getLogin(req, res) {
 }
 
 function deleteLogin(req, res) {
-	return null;
+	const { id } = req.params || req.query;
+
+	prisma.login.delete({ where: { id: Number(id) } })
+	.then((result) => res.send(result))
+	.catch((error) => res.send("Error: " + error.message))
 }
 
 function updateLogin(req, res) {
-	return null;
+	// Serverless Database does not suport foreign keys, bug detected
+	const { id } = req.params || req.query;
+
+	prisma.login.update({ where: { id: Number(id) }, data: req.body })
+	.then((result) => res.send(result))
+	.catch((error) => res.send("Error: " + error.message))
 }
 
 module.exports = {
