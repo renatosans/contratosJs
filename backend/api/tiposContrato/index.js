@@ -1,24 +1,25 @@
 const prisma = require('../../config/db');
 
 
+function getTiposContrato(req, res) {
+	prisma.tipocontrato.findMany()
+	.then((tipos) => res.send(tipos))
+	.catch((error) => res.send("Error: " + error.message))
+}
+
+function insertTipoContrato(req, res) {
+	prisma.tipocontrato.create({ data: req.body })
+	.then((result) => res.send(result))
+	.catch((error) => res.send("Error: " + error.message))
+}
+
 module.exports = {
 	default: (req, res) => {
 		switch (req.method) {
-			case "POST": {
-				res.send('Registro inserido no BD')
-			}
-			case "GET": {
-				res.send('Listagem de registros')
-			}
+			case "POST": return insertTipoContrato(req, res)
+			case "GET": return getTiposContrato(req, res)
 		}
 	},
-    get: (req, res) => { 
-        prisma.tipocontrato.findMany()
-		.then((tipos) => res.send(tipos))
-		.catch((error) => res.send("Error: " + error.message))
-    },
-    post: (req, res) => {
-		// TODO: insert
-		res.send('Registro inserido no BD')
-    }
+    get: (req, res) => getTiposContrato(req, res),
+    post: (req, res) => insertTipoContrato(req, res),
 }
