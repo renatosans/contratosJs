@@ -15,6 +15,9 @@
 
     <script type="text/javascript" >
         $(document).ready(function($){
+            axios.get('/api/logins')
+            .then((result) => console.log(result))
+            .catch((error) => console.log(error))
 
             $('input[type=text]').each(function(){
                 $(this).addClass('flickTextBox');
@@ -66,6 +69,11 @@
     </script>
 </head>
 <body>
+    <h1>Endpoints</h1>
+    <p>/api/logins</p>
+    <p>/api/contratos</p>
+    <p>/api/tiposContrato</p>
+
     <div id="dialog-modal">
         <div id="logo-cliente">
             <img src="img/logo.png" alt="Addon de Contratos" />
