@@ -1,0 +1,431 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model acessorios {
+  id            Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  equipamento   Int
+  codigoItem    String @db.VarChar(20)
+  descricaoItem String @db.VarChar(100)
+  quantidade    Int
+}
+
+model ativofixo {
+  id                      Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  businessPartnerCode     String   @db.VarChar(30)
+  businessPartnerName     String   @db.VarChar(200)
+  codigoCartaoEquipamento Int
+  codigoItem              String   @db.VarChar(40)
+  descricao               String   @db.VarChar(200)
+  valorAquisicao          Float    @db.Float
+  dataInstalacao          DateTime @db.DateTime(0)
+  vidaUtil                Int
+}
+
+model autorizacao {
+  id               Int @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  login_id         Int
+  funcionalidade   Int
+  nivelAutorizacao Int
+}
+
+model bonus {
+  id             Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  contrato_id    Int
+  subContrato_id Int
+  contador_id    Int
+  de             Int
+  ate            Int
+  valor          Float   @db.Float
+  removido       Boolean
+}
+
+model chamadoservico {
+  id                  Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  idExterno           Int?
+  defeito             String    @db.VarChar(150)
+  dataAbertura        DateTime? @db.Timestamp(0)
+  dataFechamento      DateTime? @db.Timestamp(0)
+  dataAtendimento     DateTime? @db.Timestamp(0)
+  tempoAtendimento    DateTime? @db.Time(0)
+  businessPartnerCode String    @db.VarChar(30)
+  contato             String    @db.VarChar(150)
+  status              Int
+  tipo                Int
+  abertoPor           Int
+  tecnico             Int
+  prioridade          Int
+  cartaoEquipamento   Int
+  modelo              String    @db.VarChar(120)
+  fabricante          String    @db.VarChar(60)
+  observacaoTecnica   String    @db.VarChar(420)
+  sintoma             String    @db.VarChar(420)
+  causa               String    @db.VarChar(420)
+  acao                String    @db.VarChar(420)
+}
+
+model cobranca {
+  id                Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  contrato_id       Int
+  subContrato_id    Int
+  contador_id       Int
+  modalidadeMedicao Int
+  fixo              Float   @db.Float
+  variavel          Float   @db.Float
+  franquia          Int
+  individual        Boolean
+  removido          Boolean
+
+  @@index([subContrato_id], map: "fk_cobranca_subContrato1_idx")
+}
+
+model config {
+  id            Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nomeParametro String @db.VarChar(80)
+  descricao     String @db.VarChar(120)
+  tipoParametro Int
+  valor         String @db.VarChar(255)
+}
+
+model contador {
+  id   Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nome String @db.VarChar(45)
+}
+
+model contrato {
+  id                       Int       @id @default(autoincrement())
+  numero                   String    @db.VarChar(60)
+  pn                       String    @db.VarChar(30)
+  divisao                  String    @db.VarChar(120)
+  contato                  Int
+  status                   Int
+  categoria                Int
+  assinatura               DateTime  @db.DateTime(0)
+  encerramento             DateTime  @db.DateTime(0)
+  inicioAtendimento        DateTime  @db.DateTime(0)
+  fimAtendimento           DateTime  @db.DateTime(0)
+  primeiraParcela          DateTime  @db.DateTime(0)
+  parcelaAtual             Int
+  mesReferencia            Int
+  anoReferencia            Int
+  quantidadeParcelas       Int
+  global                   Boolean
+  vendedor                 Int
+  diaVencimento            Int
+  referencialVencimento    Int
+  diaLeitura               Int
+  referencialLeitura       Int
+  indicesReajuste_id       Int
+  dataRenovacao            DateTime? @db.DateTime(0)
+  dataReajuste             DateTime? @db.DateTime(0)
+  valorImplantacao         Float     @db.Float
+  quantParcelasImplantacao Int       @db.SmallInt
+  obs                      String    @db.LongText
+  removido                 Boolean
+}
+
+model custoindireto {
+  id              Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  data            DateTime @db.DateTime(0)
+  solicitante     Int
+  infoSolicitante String   @db.VarChar(120)
+  codigoInsumo    Int
+  medicaoInicial  Float    @db.Float
+  medicaoFinal    Float    @db.Float
+  total           Float    @db.Float
+  observacao      String   @db.VarChar(250)
+}
+
+model depreciacao {
+  id                  Int @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  ativo               Int
+  mesReferencia       Int
+  anoReferencia       Int
+  intensidadeDesgaste Int
+}
+
+model despesachamado {
+  id             Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  codigoChamado  Int
+  codigoInsumo   Int?
+  codigoItem     String @db.VarChar(40)
+  nomeItem       String @db.VarChar(200)
+  quantidade     Int
+  medicaoInicial Float  @db.Float
+  medicaoFinal   Float  @db.Float
+  totalDespesa   Float  @db.Float
+  observacao     String @db.VarChar(200)
+}
+
+model despesadistribuida {
+  chamadoServico_id Int
+  custoIndireto_id  Int
+
+  @@id([chamadoServico_id, custoIndireto_id])
+}
+
+model equipamento {
+  id                 Int       @id @unique(map: "insID_UNIQUE") @default(autoincrement())
+  manufacturerSN     String?   @db.VarChar(32)
+  internalSN         String?   @db.VarChar(32)
+  itemCode           String?   @db.VarChar(20)
+  itemName           String?   @db.VarChar(100)
+  customer           String?   @db.VarChar(15)
+  custmrName         String?   @db.VarChar(100)
+  contactPerson      Int?
+  addressType        String?   @db.VarChar(100)
+  street             String?   @db.VarChar(100)
+  streetNo           String?   @db.VarChar(100)
+  building           String?   @db.VarChar(100)
+  zip                String?   @db.VarChar(20)
+  block              String?   @db.VarChar(100)
+  city               String?   @db.VarChar(100)
+  state              String?   @db.VarChar(3)
+  country            String?   @db.VarChar(3)
+  instLocation       String?   @db.VarChar(254)
+  status             String?   @db.Char(1)
+  installationDate   DateTime? @db.DateTime(0)
+  installationDocNum Int?
+  counterInitialVal  Int?
+  removalDate        DateTime? @db.DateTime(0)
+  removalDocNum      Int?
+  counterFinalVal    Int?
+  modelo             Int?
+  capacidade         Int?
+  sla                Int?
+  vendedor           Int?
+  instaladoPor       Int?
+}
+
+model estatisticaatendimento {
+  id                 Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  mesReferencia      Int
+  anoReferencia      Int
+  quantidadeChamados Int
+  tempoEmAtendimento DateTime @db.Time(0)
+}
+
+model fabricante {
+  id   Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nome String @db.VarChar(100)
+}
+
+model faturamento {
+  id                  Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  businessPartnerCode String   @db.VarChar(30)
+  businessPartnerName String   @db.VarChar(200)
+  mailing_id          Int
+  dataInicial         DateTime @db.DateTime(0)
+  dataFinal           DateTime @db.DateTime(0)
+  mesReferencia       Int
+  anoReferencia       Int
+  multaRecisoria      Float    @db.Float
+  acrescimoDesconto   Float    @db.Float
+  total               Float    @db.Float
+  obs                 String   @db.LongText
+  incluirRelatorio    Boolean
+}
+
+model formaleitura {
+  id   Int    @id
+  nome String @db.VarChar(45)
+}
+
+model funcionalidade {
+  id   Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nome String @db.VarChar(45)
+}
+
+model historico {
+  id            Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  login_id      Int
+  data          DateTime @db.DateTime(0)
+  transacao     String   @db.VarChar(120)
+  tipoAgregacao String?  @db.VarChar(100)
+  idAgregacao   Int?
+  tipoObjeto    String?  @db.VarChar(100)
+  idObjeto      Int?
+  propriedade   String?  @db.VarChar(100)
+  valor         String?  @db.VarChar(500)
+}
+
+model indicesreajuste {
+  id       Int    @id @default(autoincrement())
+  sigla    String @db.VarChar(20)
+  nome     String @db.VarChar(100)
+  aliquota Float  @db.Float
+}
+
+model insumo {
+  id         Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  descricao  String @db.VarChar(120)
+  tipoInsumo Int
+  valor      Float  @db.Float
+}
+
+model itemfaturamento {
+  id                      Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  codigoFaturamento       Int
+  contrato_id             Int
+  subContrato_id          Int
+  codigoCartaoEquipamento Int
+  tipoLocacao             String   @db.VarChar(120)
+  counterId               Int
+  dataLeitura             DateTime @db.DateTime(0)
+  medicaoFinal            Decimal  @db.Decimal(10, 0)
+  medicaoInicial          Decimal  @db.Decimal(10, 0)
+  consumo                 Decimal  @db.Decimal(10, 0)
+  ajuste                  Decimal  @db.Decimal(10, 0)
+  franquia                Decimal  @db.Decimal(16, 6)
+  excedente               Decimal  @db.Decimal(10, 0)
+  tarifaSobreExcedente    Float    @db.Float
+  fixo                    Float    @db.Float
+  variavel                Float    @db.Float
+  total                   Float    @db.Float
+  acrescimoDesconto       Float    @db.Float
+}
+
+model itens {
+  codigoCartaoEquipamento Int    @id
+  businessPartnerCode     String @db.VarChar(30)
+  contrato_id             Int
+  subContrato_id          Int
+}
+
+model leitura {
+  id                      Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  codigoCartaoEquipamento Int
+  chamadoServico_id       Int?
+  consumivel_id           Int?
+  data                    DateTime @default(now()) @db.Timestamp(0)
+  contador_id             Int
+  contagem                Decimal  @db.Decimal(10, 0)
+  ajusteContagem          Decimal  @db.Decimal(10, 0)
+  assinaturaDatacopy      Int?
+  assinaturaCliente       String?  @db.VarChar(45)
+  obs                     String   @default("observações") @db.VarChar(4000)
+  origemLeitura_id        Int
+  formaLeitura_id         Int
+  reset                   Boolean
+}
+
+model login {
+  id        Int     @id @default(autoincrement())
+  idExterno Int?
+  nome      String  @db.VarChar(50)
+  usuario   String  @db.VarChar(45)
+  senha     String  @db.VarChar(45)
+  removido  Boolean
+}
+
+model mailing {
+  id                  Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  businessPartnerCode String   @db.VarChar(30)
+  businessPartnerName String   @db.VarChar(200)
+  contrato_id         Int
+  subContrato_id      Int
+  diaFaturamento      Int
+  destinatarios       String   @db.VarChar(250)
+  enviarDemonstrativo Boolean  @default(false)
+  ultimoEnvio         DateTime @db.DateTime(0)
+
+  @@unique([businessPartnerCode, contrato_id, subContrato_id], map: "compositeIndex_UNIQUE")
+}
+
+model modeloequipamento {
+  id         Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  modelo     String @unique(map: "modelo_UNIQUE") @db.VarChar(120)
+  fabricante Int
+}
+
+model origemleitura {
+  id   Int    @id
+  nome String @db.VarChar(45)
+}
+
+model pedidoconsumivel {
+  id                      Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  codigoCartaoEquipamento Int
+  data                    DateTime @db.DateTime(0)
+  status                  Int
+  observacao              String   @db.VarChar(250)
+}
+
+model pedidopecareposicao {
+  id                Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  chamadoServico_id Int
+  data              DateTime @db.DateTime(0)
+  destinatarios     String   @db.VarChar(250)
+}
+
+model reajustecontrato {
+  id                Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  contrato_id       Int
+  data              DateTime @db.DateTime(0)
+  indiceUtilizado   String   @db.VarChar(120)
+  aliquotaUtilizada Float    @db.Float
+}
+
+model regracomissaoassinatura {
+  id                Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  segmento          Int
+  dataAssinaturaDe  DateTime @db.DateTime(0)
+  dataAssinaturaAte DateTime @db.DateTime(0)
+  comissao          Float
+}
+
+model regracomissaovolume {
+  id                  Int   @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  categoriaContrato   Int
+  quantContratosDe    Int
+  quantContratosAte   Int
+  valorFaturamentoDe  Float
+  valorFaturamentoAte Float
+  comissao            Float
+}
+
+model smtpserver {
+  id            Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nome          String  @db.VarChar(100)
+  endereco      String  @db.VarChar(100)
+  porta         Int
+  usuario       String  @db.VarChar(100)
+  senha         String  @db.VarChar(100)
+  requiresTLS   Boolean
+  defaultServer Boolean
+}
+
+model solicitacaoitem {
+  id                     Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  pedidoConsumivel_id    Int?
+  pedidoPecaReposicao_id Int?
+  codigoItem             String @db.VarChar(40)
+  nomeItem               String @db.VarChar(200)
+  quantidade             Int
+  total                  Float  @db.Float
+}
+
+model subcontrato {
+  id              Int     @id @default(autoincrement())
+  contrato_id     Int
+  tipoContrato_id Int
+  removido        Boolean
+}
+
+model tipocontrato {
+  id    Int     @id @default(autoincrement())
+  sigla String  @db.VarChar(15)
+  nome  String  @db.VarChar(45)
+  bonus Boolean
+}
+
+model tipoinsumo {
+  id            Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  tipoInsumo    String @db.VarChar(80)
+  unidadeMedida String @db.VarChar(50)
+}
