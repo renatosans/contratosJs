@@ -1,4 +1,4 @@
-![](https://github.com/renatosans/contratosJs/blob/main/Frontend/img/logo.png)
+![](https://github.com/renatosans/contratosJs/blob/main/public/img/logo.png)
 <br>
 
 #Sistema para outsourcing de impressão
