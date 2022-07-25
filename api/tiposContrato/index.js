@@ -1,4 +1,4 @@
-const prisma = require('../../config/db');
+const prisma = require('../../backend/config/db');
 
 
 function getTiposContrato(req, res) {
