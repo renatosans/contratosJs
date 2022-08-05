@@ -1,7 +1,7 @@
-
-const express = require('../node_modules/express');
+const cors = require('cors');
+const express = require('express');
 // const { createRouter } = require('express-file-routing');
-const { nextApi, nextRouter } = require('../node_modules/express-next-api');
+const { nextApi, nextRouter } = require('express-next-api');
 
 
 const port = 3000;
@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
 // setHeader('Access-Control-Allow-Origin', '*')
+app.use(cors())
 
 // createRouter(app, { directory: apiDirectory, additionalMethods: null } )
 app.use(nextApi({ base: '/api', directory: '../api', options: {caseSensitive: false} }));
